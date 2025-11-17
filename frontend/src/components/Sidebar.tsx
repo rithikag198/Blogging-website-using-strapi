@@ -1,11 +1,6 @@
 import Link from 'next/link';
-import { Category, Tag } from '@/lib/api';
 
-interface SidebarProps {
-  // Categories and tags removed as they don't exist in current Strapi schema
-}
-
-export default function Sidebar({}: SidebarProps) {
+export default function Sidebar() {
   return (
     <div className="space-y-8">
       {/* Quick Links */}

@@ -1,7 +1,8 @@
-import { getBlogPosts } from '@/lib/api';
+import { getBlogPosts, ContentChild } from '@/lib/api';
 import BlogCard from '@/components/BlogCard';
 import Sidebar from '@/components/Sidebar';
 import Newsletter from '@/components/Newsletter';
+import Image from 'next/image';
 
 export default async function Home() {
   const posts = await getBlogPosts();
@@ -59,10 +60,12 @@ export default async function Home() {
                   <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
                     {posts.data[0].featured_image && (
                       <div className="relative h-64 sm:h-80 overflow-hidden">
-                        <img
+                        <Image
                           src={`http://localhost:1337${posts.data[0].featured_image.url}`}
                           alt={posts.data[0].featured_image.alternativeText || posts.data[0].title}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                         <div className="absolute bottom-6 left-6 right-6">
@@ -95,7 +98,7 @@ export default async function Home() {
                       </div>
                       <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
                         {posts.data[0].content?.filter(item => item.type === 'paragraph' && item.children)
-                          .map(item => item.children.map((child: any) => child.text).join(''))
+                          .map(item => item.children!.map((child: ContentChild) => child.text).join(''))
                           .join(' ')
                           .substring(0, 200) + '...'}
                       </p>

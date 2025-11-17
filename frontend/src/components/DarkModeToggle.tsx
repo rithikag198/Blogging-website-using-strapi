@@ -3,29 +3,31 @@
 import { useState, useEffect } from 'react';
 
 export default function DarkModeToggle() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    // Check for saved preference or default to light mode
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark' || 
-        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
+  const [isDark, setIsDark] = useState(() => {
+    // Initialize state based on localStorage or system preference
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      return savedTheme === 'dark' || 
+        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
     }
-  }, []);
+    return false;
+  });
+  
+  useEffect(() => {
+    // Apply theme to DOM when state changes
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
 
   const toggleDarkMode = () => {
     const newTheme = !isDark;
     setIsDark(newTheme);
     
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    // Save to localStorage
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
   };
 
   return (

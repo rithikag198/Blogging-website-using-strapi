@@ -1,8 +1,8 @@
-import { getBlogPosts } from '@/lib/api';
-import Link from 'next/link';
 import SocialShare from '@/components/SocialShare';
 import Header from '@/components/Header';
 import { notFound } from 'next/navigation';
+import { ContentBlock, ContentChild } from '@/lib/api';
+import Image from 'next/image';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -10,12 +10,12 @@ interface BlogPostPageProps {
   }>;
 }
 
-const calculateReadingTime = (content: any[]): number => {
+const calculateReadingTime = (content: ContentBlock[]): number => {
   if (!content || !Array.isArray(content)) return 1;
   
   const text = content
     .filter(item => item.type === 'paragraph' && item.children)
-    .map(item => item.children.map((child: any) => child.text).join(''))
+    .map(item => item.children!.map((child: ContentChild) => child.text).join(''))
     .join(' ');
   
   const wordsPerMinute = 200;
@@ -39,7 +39,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     }
     
     const allPosts = await response.json();
-    const post = allPosts.data.find((p: any) => p.id.toString() === postId);
+    const post = allPosts.data.find((p: { id: number }) => p.id.toString() === postId);
     
     if (!post) {
       notFound();
@@ -53,7 +53,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       });
     };
 
-    const renderContent = (content: any[]) => {
+    const renderContent = (content: ContentBlock[]) => {
       if (!content || content.length === 0) {
         return <p className="text-gray-600">No content available.</p>;
       }
@@ -63,7 +63,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           case 'paragraph':
             return (
               <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                {item.children?.map((child: any, childIndex: number) => {
+                {item.children?.map((child: ContentChild, childIndex: number) => {
                   if (child.type === 'text') {
                     return child.text;
                   }
@@ -108,9 +108,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           case 'list':
             return (
               <ul key={index} className="list-disc list-inside mb-4 text-gray-700">
-                {item.children?.map((listItem: any, itemIndex: number) => (
+                {item.children?.map((listItem: ContentChild, itemIndex: number) => (
                   <li key={itemIndex} className="mb-2">
-                    {listItem.children?.[0]?.text || ''}
+                    {listItem.text || ''}
                   </li>
                 ))}
               </ul>
@@ -128,14 +128,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <article className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
             {/* Featured Image */}
             <div className="relative h-64 md:h-96 overflow-hidden">
-              <img
+              <Image
                 src={
-                  post.featured_image?.url 
+                  post.featured_image?.url
                     ? `http://localhost:1337${post.featured_image.url}`
                     : `https://picsum.photos/seed/${post.title.replace(/\s+/g, '-').toLowerCase()}/1200/600.jpg`
                 }
                 alt={post.featured_image?.alternativeText || post.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             </div>

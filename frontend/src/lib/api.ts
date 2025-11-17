@@ -1,10 +1,26 @@
 const STRAPI_URL = 'http://localhost:1337';
 
+export interface ContentBlock {
+  type: string;
+  children?: ContentChild[];
+  level?: number;
+}
+
+export interface ContentChild {
+  type: string;
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  url?: string;
+  children?: ContentChild[];
+}
+
 export interface BlogPost {
   id: number;
   documentId: string;
   title: string;
-  content: any[];
+  content: ContentBlock[];
   author: string;
   published_date: string;
   slug?: string;

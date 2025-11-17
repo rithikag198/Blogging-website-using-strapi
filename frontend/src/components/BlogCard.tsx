@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { BlogPost } from '@/lib/api';
+import Image from 'next/image';
+import { BlogPost, ContentBlock, ContentChild } from '@/lib/api';
 import { calculateReadingTime } from '@/lib/readingTime';
 
 interface BlogCardProps {
@@ -15,11 +16,11 @@ export default function BlogCard({ post }: BlogCardProps) {
     });
   };
 
-  const extractTextFromContent = (content: any[]): string => {
+  const extractTextFromContent = (content: ContentBlock[]): string => {
     if (!content || !Array.isArray(content)) return '';
     return content
       .filter(item => item.type === 'paragraph' && item.children)
-      .map(item => item.children.map((child: any) => child.text).join(''))
+      .map(item => item.children!.map((child: ContentChild) => child.text).join(''))
       .join(' ')
       .substring(0, 150) + '...';
   };
@@ -28,14 +29,16 @@ export default function BlogCard({ post }: BlogCardProps) {
     <article className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer">
       {/* Featured Image */}
       <div className="relative h-48 overflow-hidden">
-        <img
+        <Image
           src={
-            post.featured_image?.url 
+            post.featured_image?.url
               ? `http://localhost:1337${post.featured_image.url}`
               : `https://picsum.photos/seed/${post.title.replace(/\s+/g, '-').toLowerCase()}/800/400.jpg`
           }
           alt={post.featured_image?.alternativeText || post.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
       </div>

@@ -1,4 +1,6 @@
-export function calculateReadingTime(content: any[]): string {
+import { ContentBlock, ContentChild } from './api';
+
+export function calculateReadingTime(content: ContentBlock[]): string {
   if (!content || !Array.isArray(content)) {
     return '1 min read';
   }
@@ -6,13 +8,13 @@ export function calculateReadingTime(content: any[]): string {
   // Extract text from content
   const text = content
     .filter(item => item.type === 'paragraph' && item.children)
-    .map(item => item.children.map((child: any) => child.text).join(' '))
+    .map(item => item.children!.map((child: ContentChild) => child.text).join(' '))
     .join(' ');
 
   // Calculate reading time (average 200 words per minute)
   const wordsPerMinute = 200;
   const words = text.trim().split(/\s+/).length;
   const minutes = Math.ceil(words / wordsPerMinute);
-
+  
   return `${minutes} min read`;
 }
