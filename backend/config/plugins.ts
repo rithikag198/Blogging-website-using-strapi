@@ -1,1 +1,5 @@
-export default () => ({});
+export default () => ({
+  upload: {
+    enabled: true,
+  },
+});
