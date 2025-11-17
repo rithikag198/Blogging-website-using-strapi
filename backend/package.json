@@ -16,9 +16,11 @@
   },
   "dependencies": {
     "@strapi/plugin-cloud": "5.31.0",
+    "@strapi/plugin-upload": "^5.0.0-beta.5",
     "@strapi/plugin-users-permissions": "5.31.0",
     "@strapi/strapi": "5.31.0",
     "better-sqlite3": "12.4.1",
+    "file-type": "^18.7.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
